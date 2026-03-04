@@ -6,7 +6,7 @@ from aiogram.types import Message
 from aiogram.enums import ChatType
 from aiogram.exceptions import TelegramForbiddenError, TelegramBadRequest
 
-TOKEN = "8761185657:AAGTvI3Sutm_Iejo71AIHo79aLIEstzbLuk"  
+TOKEN = "8761185657:AAEC8PeqbU34TOUppdpleI-n_nkXi4jeSj8"
 
 BAD_PHRASES = [
     "онлайн заработок",
@@ -14,6 +14,10 @@ BAD_PHRASES = [
     "ищу людей для дистанционной работы",
     "удаленка",
     "attività lavorativa",
+    "телка",
+    "хохол",
+    "москаль",
+    "на украине"
 ]
 
 logging.basicConfig(level=logging.INFO)
@@ -27,16 +31,25 @@ async def cmd_start(message: Message):
     await message.answer("Я фильтрую сообщения в группах и удаляю спам-фразы.")
 
 
+async def is_admin(message: Message):
+    member = await bot.get_chat_member(message.chat.id, message.from_user.id)
+    return member.status in ("administrator", "creator")
+
+
 @dp.message(F.chat.type.in_({ChatType.GROUP, ChatType.SUPERGROUP}), F.text)
 async def spam_filter(message: Message):
     text = message.text.lower()
 
     if any(p.lower() in text for p in BAD_PHRASES):
+
+        if await is_admin(message):
+            return
+
         try:
-            await message.delete() 
+            await message.delete()
             logging.info(f"Deleted message {message.message_id} in chat {message.chat.id}")
         except TelegramForbiddenError:
-            logging.error("NO RIGHTS: bot has no permission to delete messages (make it admin + Delete messages).")
+            logging.error("NO RIGHTS: bot has no permission to delete messages.")
         except TelegramBadRequest as e:
             logging.error(f"BAD REQUEST: {e}")
 
