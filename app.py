@@ -6,7 +6,7 @@ from aiogram.types import Message
 from aiogram.enums import ChatType
 from aiogram.exceptions import TelegramForbiddenError, TelegramBadRequest
 
-TOKEN = "—-"
+TOKEN = "8761185657:AAEC8PeqbU34TOUppdpleI-n_nkXi4jeSj8"
 
 BAD_PHRASES = [
     "онлайн заработок",
@@ -69,5 +69,6 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 
 
