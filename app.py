@@ -6,25 +6,25 @@ from aiogram.types import Message
 from aiogram.enums import ChatType
 from aiogram.exceptions import TelegramForbiddenError, TelegramBadRequest
 
-TOKEN = "8761185657:AAEC8PeqbU34TOUppdpleI-n_nkXi4jeSj8"
+TOKEN = "—-"
 
 BAD_PHRASES = [
     "онлайн заработок",
     "онлайн заработка",
     "ищу людей для дистанционной работы",
     "удаленка",
-    "attività lavorativa",
-    "тёлка",
-    "телка",
     "удалёнка",
     "удаленная работа",
     "удалённая работа",
+    "attività lavorativa",
+    "тёлка",
+    "телка",
     "хохол",
     "москаль",
-    "Ищу ответственных от 19 лет на полностью удалёнку"
-    "Пишите "+" в личные сообщения если интересно"
-    "ищу ответственных"
-    "на украине"
+    "ищу ответственных",
+    "ищу ответственных от 19 лет на полностью удалёнку",
+    "пишите + в личные сообщения если интересно",
+    "на украине",
 ]
 
 logging.basicConfig(level=logging.INFO)
@@ -45,10 +45,12 @@ async def is_admin(message: Message):
 
 @dp.message(F.chat.type.in_({ChatType.GROUP, ChatType.SUPERGROUP}), F.text)
 async def spam_filter(message: Message):
-    text = message.text.lower()
+    text = (message.text or "").lower()
 
-    if any(p.lower() in text for p in BAD_PHRASES):
+    # если хоть одна фраза встречается как подстрока — удаляем
+    if any(phrase.lower() in text for phrase in BAD_PHRASES):
 
+        # админов не трогаем
         if await is_admin(message):
             return
 
